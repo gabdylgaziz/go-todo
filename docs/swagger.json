@@ -1,0 +1,257 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API for managing tasks in a Todo List application",
+        "title": "Todo List API",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/todo-list/tasks": {
+            "get": {
+                "description": "Retrieve tasks filtered by status (active or done)",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List tasks by status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Status of the tasks to retrieve (active or done)",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tasks",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/gotodo.TaskResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status parameter",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new task with title and date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new task",
+                "parameters": [
+                    {
+                        "description": "Task creation request body",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/gotodo.TaskCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Task created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/gotodo.TaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Task already exists",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/todo-list/tasks/{id}": {
+            "put": {
+                "description": "Update the title and date of an existing task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update an existing task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Task update request body",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/gotodo.TaskUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Task updated successfully"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a task by its ID",
+                "summary": "Delete a task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Task deleted successfully"
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/todo-list/tasks/{id}/done": {
+            "put": {
+                "description": "Mark a task as completed by its ID",
+                "summary": "Mark a task as done",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Task marked as done successfully"
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Healthcheking.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "gotodo.TaskCreate": {
+            "type": "object",
+            "properties": {
+                "active_at": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "gotodo.TaskResponse": {
+            "type": "object",
+            "properties": {
+                "active_at": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "gotodo.TaskUpdate": {
+            "type": "object",
+            "properties": {
+                "active_at": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

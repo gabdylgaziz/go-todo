@@ -1,0 +1,170 @@
+definitions:
+  gotodo.TaskCreate:
+    properties:
+      active_at:
+        type: string
+      title:
+        type: string
+    type: object
+  gotodo.TaskResponse:
+    properties:
+      active_at:
+        type: string
+      done:
+        type: boolean
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  gotodo.TaskUpdate:
+    properties:
+      active_at:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API for managing tasks in a Todo List application
+  title: Todo List API
+  version: 1.0.0
+paths:
+  /api/todo-list/tasks:
+    get:
+      description: Retrieve tasks filtered by status (active or done)
+      parameters:
+      - description: Status of the tasks to retrieve (active or done)
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            items:
+              $ref: '#/definitions/gotodo.TaskResponse'
+            type: array
+        "400":
+          description: Invalid status parameter
+          schema:
+            additionalProperties: true
+            type: object
+      summary: List tasks by status
+    post:
+      consumes:
+      - application/json
+      description: Create a new task with title and date
+      parameters:
+      - description: Task creation request body
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/gotodo.TaskCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Task created successfully
+          schema:
+            $ref: '#/definitions/gotodo.TaskResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Task already exists
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new task
+  /api/todo-list/tasks/{id}:
+    delete:
+      description: Delete a task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Task deleted successfully
+        "404":
+          description: Task not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a task
+    put:
+      consumes:
+      - application/json
+      description: Update the title and date of an existing task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task update request body
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/gotodo.TaskUpdate'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Task updated successfully
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Task not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update an existing task
+  /api/todo-list/tasks/{id}/done:
+    put:
+      description: Mark a task as completed by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Task marked as done successfully
+        "404":
+          description: Task not found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Mark a task as done
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Healthcheking.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+swagger: "2.0"
